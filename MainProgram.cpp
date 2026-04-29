@@ -1,17 +1,15 @@
 #include <iostream>
-#include <string>
 #include <cmath>
 
 // ============================================================
 // CLASS DEFINITIONS
 // ============================================================
 
-class Rectangle; // forward declaration
-
 class Point {
 private:
     double x;
     double y;
+
 public:
     // Constructor
     Point(double x, double y) : x(x), y(y) {}
@@ -24,9 +22,6 @@ public:
     void display() const {
         std::cout << "(" << x << ", " << y << ")";
     }
-
-    // Friend class declaration
-    friend class Rectangle;
 };
 
 
@@ -34,6 +29,7 @@ class Rectangle {
 private:
     Point topLeft;
     Point bottomRight;
+
 public:
     // Constructor
     Rectangle(double x1, double y1, double x2, double y2)
@@ -41,12 +37,12 @@ public:
 
     // Width
     double getWidth() const {
-        return std::abs(bottomRight.x - topLeft.x);
+        return std::abs(bottomRight.getX() - topLeft.getX());
     }
 
     // Height
     double getHeight() const {
-        return std::abs(topLeft.y - bottomRight.y);
+        return std::abs(topLeft.getY() - bottomRight.getY());
     }
 
     // Area
@@ -60,7 +56,7 @@ public:
         topLeft.display();
         std::cout << ", Bottom Right: ";
         bottomRight.display();
-        std::cout << std::endl;
+        std::cout << '\n';
     }
 
     // Friend function
@@ -68,16 +64,19 @@ public:
 };
 
 
-// Friend function implementation
+// Friend function implementation (FIXED: double comparison)
 bool isSameSize(const Rectangle& r1, const Rectangle& r2) {
-    return (r1.getWidth() == r2.getWidth() &&
-            r1.getHeight() == r2.getHeight());
+    const double EPSILON = 1e-9;
+
+    return (std::abs(r1.getWidth() - r2.getWidth()) < EPSILON &&
+            std::abs(r1.getHeight() - r2.getHeight()) < EPSILON);
 }
 
 
 class ConstDemo {
 private:
     int value;
+
 public:
     // Constructor
     ConstDemo(int v) : value(v) {}
@@ -100,6 +99,7 @@ public:
 // ============================================================
 // MAIN
 // ============================================================
+
 int main() {
     // Rectangle demo
     Rectangle r1(0, 10, 5, 0);
@@ -108,8 +108,8 @@ int main() {
     r1.display();
     r2.display();
 
-    std::cout << "Area r1: " << r1.getArea() << std::endl;
-    std::cout << "Area r2: " << r2.getArea() << std::endl;
+    std::cout << "Area r1: " << r1.getArea() << '\n';
+    std::cout << "Area r2: " << r2.getArea() << '\n';
 
     if (isSameSize(r1, r2)) {
         std::cout << "Rectangles are the same size.\n";
@@ -119,11 +119,13 @@ int main() {
 
     // ConstDemo
     ConstDemo obj(10);
-    std::cout << "Value: " << obj.getValue() << std::endl;
-    std::cout << "Double (const): " << obj.constGetDouble() << std::endl;
+
+    std::cout << "Value: " << obj.getValue() << '\n';
+    std::cout << "Double (const): " << obj.constGetDouble() << '\n';
 
     obj.doubleValue();
-    std::cout << "After doubling: " << obj.getValue() << std::endl;
+
+    std::cout << "After doubling: " << obj.getValue() << '\n';
 
     return 0;
 }
